@@ -9,7 +9,11 @@ REMOVE_WORDS = ['|', '[', ']', '语音', '图片']
 
 def parseData(path):
     df = pd.read_csv(path,encoding='utf-8')
-    dataX = df.Quesion.str.cat(df.Dialogue)
+    #print df
+    #print type(df)
+    #print df.dtypes
+    dataX = df.Question.str.cat(df.Dialogue)
+
     dataY = []
     if 'Report' in df.columns:
         dataY = df.Report
@@ -17,7 +21,7 @@ def parseData(path):
 
 def readStopWords(path):
     lines = set()
-    with open(path,mode='r', encoding='utf-8') as f:
+    with open(path,mode='r') as f:
         for line in f :
             line = line.strip()
             lines.add(line)
@@ -51,7 +55,7 @@ def removeWord(wordsList):
 
 def saveData(data1,data2,data3,path1,path2,path3,stopWordPath):
     stopWords = readStopWords(stopWordPath)
-    with open(path1,'w',encoding='utf-8') as f1:
+    with open(path1,'w') as f1:
         count = 0
         for line in data1:
             if isinstance(line,str):
@@ -62,27 +66,27 @@ def saveData(data1,data2,data3,path1,path2,path3,stopWordPath):
             count += 1
             f1.write('\n')
 
-    with open(path2, 'w', encoding='utf-8') as f2:
+    with open(path2, 'w') as f2:
         for line in data2:
             if isinstance(line,str):
                 segList = segment(line.strip(),cut_type='word')
                 segList = removeWord(segList)
                 segLine = ' '.join(segList)
                 f2.write('%s' % segLine)
-            f1.write('\n')
+            f2.write('\n')
 
-    with open(path3, 'w', encoding='utf-8') as f3:
+    with open(path3, 'w') as f3:
         for line in data3:
             if isinstance(line,str):
                 segList = segment(line.strip(),cut_type='word')
                 segList = removeWord(segList)
                 segLine = ' '.join(segList)
                 f3.write('%s' % segLine)
-            f1.write('\n')
+            f3.write('\n')
 
 
 if __name__ == '__main__' :
     trainListSrc, trainlListTag = parseData('./datasets/AutoMaster_TestSet.csv')
-    testListSrc,_ = parseData('./datesets/AutoMaster_TrainSet.csv')
+    testListSrc,_ = parseData('./datasets/AutoMaster_TrainSet.csv')
 
-    saveData(trainListSrc, trainlListTag,testListSrc,'./datasets/train_set.seg_x.txt','./datasets/train_set.seg_y.txt','./datasets/test_set.seg_x.txt',stopWordPath='./datasets/stop_words.txt')
+    saveData(trainListSrc, trainlListTag,testListSrc,'./datasets/train_set.seg_x.txt','./datasets/train_set.seg_y.txt','./datasets/test_set.seg_x.txt',stopWordPath='./datasets/stopwords.txt')
